@@ -21,7 +21,7 @@ def get_access_token():
     token = jwt.encode(payload, CREDS["private_key"], algorithm="RS256")
 
     r = requests.post("https://oauth2.googleapis.com/token", data={
-        "grant_type": "urn:ietf:params:oauth:grant_type:jwt-bearer",
+        "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
         "assertion": token
     }, timeout=15)
     resp = r.json()
