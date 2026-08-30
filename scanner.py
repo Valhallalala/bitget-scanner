@@ -1,10 +1,51 @@
 import requests
+import json
 import os
+from datetime import datetime
+
+SHEET_ID = os.environ["SPREADSHEET_ID"]
+CREDS = json.loads(os.environ["GDRIVE_CREDENTIALS"])
+
+def get_access_token():
+    import jwt
+    import time
+
+    now = int(time.time())
+    payload = {
+        "iss": CREDS["client_email"],
+        "scope": "https://www.googleapis.com/auth/spreadsheets",
+        "aud": "https://oauth2.googleapis.com/token",
+        "iat": now,
+        "exp": now + 3600
+    }
+    token = jwt.encode(payload, CREDS["private_key"], algorithm="RS256")
+
+    r = requests.post("https://oauth2.googleapis.com/token", data={
+        "grant_type": "urn:ietf:params:oauth:grant_type:jwt-bearer",
+        "assertion": token
+    }, timeout=15)
+    return r.json()["access_token"]
+
+def update_sheet(rows):
+    token = get_access_token()
+    sheet = "Лист1"
+    url = f"https://sheets.googleapis.com/v4/spreadsheets/{SHEET_ID}/values/{sheet}!A1"
+
+    data = [
+        ["Тикер", "Цена", "Рост 1ч, %", "Рост 4ч, %", "Объём 1ч, $", "Рост объёма, %", "Обновлено"],
+        *rows
+    ]
+
+    requests.put(
+        url,
+        headers={"Authorization": f"Bearer {token}"},
+        json={"range": f"{sheet}!A1", "majorDimension": "ROWS", "values": data},
+        timeout=15
+    )
 
 def main():
     url = "https://api.bitget.com/api/v2/mix/market/tickers?productType=USDT-FUTURES"
-    response = requests.get(url, timeout=15)
-    data = response.json().get("data", [])
+    data = requests.get(url, timeout=15).json().get("data", [])
 
     candidates = []
     for item in data:
@@ -25,7 +66,7 @@ def main():
     candidates.sort(key=lambda x: -x[2])
     candidates = candidates[:150]
 
-    signals = []
+    rows = []
 
     for sym, price, base_vol in candidates:
         try:
@@ -62,24 +103,23 @@ def main():
             strong_volume = volume >= 500000 and vol_ratio >= 2
 
             if (overheat1h or overheat4h) and strong_volume:
-                signals.append({
-                    "symbol": sym,
-                    "price": round(price, 6),
-                    "change1h": round(change1h, 2),
-                    "change4h": round(change4h, 2),
-                    "volume": int(volume),
-                    "vol_ratio": round(vol_ratio * 100)
-                })
+                rows.append([
+                    sym,
+                    round(price, 6),
+                    round(change1h, 2),
+                    round(change4h, 2),
+                    int(volume),
+                    round(vol_ratio * 100),
+                    datetime.utcnow().strftime("%H:%M:%S")
+                ])
         except Exception:
             continue
 
-    signals.sort(key=lambda x: -x["vol_ratio"])
+    rows.sort(key=lambda x: -x[5])
+    update_sheet(rows)
+    print("Обновлено строк:", len(rows))
 
-    print("Тикер | Цена | Рост 1ч % | Рост 4ч % | Объём 1ч | Рост объёма %")
-    if not signals:
-        print("Сигналов нет")
-    for s in signals:
-        print(f"{s['symbol']} | {s['price']} | {s['change1h']} | {s['change4h']} | {s['volume']} | {s['vol_ratio']}")
-
+if __name__ == "__main__":
+    main()
 if __name__ == "__main__":
     main()
