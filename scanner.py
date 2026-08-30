@@ -24,7 +24,11 @@ def get_access_token():
         "grant_type": "urn:ietf:params:oauth:grant_type:jwt-bearer",
         "assertion": token
     }, timeout=15)
-    return r.json()["access_token"]
+    resp = r.json()
+    if "access_token" not in resp:
+        print("Ответ Google:", resp)
+        raise SystemExit(1)
+    return resp["access_token"]
 
 def update_sheet(rows):
     token = get_access_token()
