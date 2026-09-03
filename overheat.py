@@ -97,15 +97,6 @@ def main():
             continue
 
     rows.sort(key=lambda x: -x[4])
-    rows.append([
-        "TEST",
-        1.23,
-        5.0,
-        10.0,
-        0.01,
-        1000000,
-        datetime.utcnow().strftime("%H:%M:%S")
-    ])
     update_sheet(rows)
     print("Обновлено строк:", len(rows))
 
