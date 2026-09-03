@@ -96,7 +96,7 @@ def main():
             continue
 
     rows.sort(key=lambda x: -x[4])
-        rows.append([
+    rows.append([
         "TEST",
         1.23,
         5.0,
