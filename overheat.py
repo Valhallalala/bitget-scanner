@@ -65,8 +65,7 @@ def main():
 
         candidates.append((sym, price, change24h, funding, vol))
 
-    candidates.sort(key=lambda x: -x[4])
-    candidates = candidates[:100]
+        candidates = candidates
 
     rows = []
 
