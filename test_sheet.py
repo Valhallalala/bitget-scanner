@@ -40,10 +40,10 @@ def update_sheet():
     resp = requests.put(
         url,
         headers={"Authorization": f"Bearer {token}"},
+        params={"valueInputOption": "RAW"},
         json={"range": f"{sheet}!A1", "majorDimension": "ROWS", "values": data},
         timeout=15
     )
-
     print("Статус записи:", resp.status_code)
     print("Ответ:", resp.text[:500])
 
