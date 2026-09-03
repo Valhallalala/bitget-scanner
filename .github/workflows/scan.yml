@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
-      - run: python overheat.py
+      - run: python test_candles.py
         env:
           OVERHEAT_SHEET_ID: ${{ secrets.OVERHEAT_SHEET_ID }}
           GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
