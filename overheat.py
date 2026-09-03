@@ -75,7 +75,7 @@ def main():
         try:
             c = requests.get(
                 "https://api.bitget.com/api/v2/mix/market/candles",
-                params={"symbol": sym, "granularity": "1D", "limit": 4},
+                params={"symbol": sym, "granularity": "1D", "limit": 4, "productType": "USDT-FUTURES"},
                 timeout=10
             ).json().get("data", [])
             if len(c) < 4:
