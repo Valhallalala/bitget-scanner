@@ -39,6 +39,7 @@ def update_sheet(rows):
     requests.put(
         url,
         headers={"Authorization": f"Bearer {token}"},
+        params={"valueInputOption": "RAW"},
         json={"range": f"{sheet}!A1", "majorDimension": "ROWS", "values": data},
         timeout=15
     )
