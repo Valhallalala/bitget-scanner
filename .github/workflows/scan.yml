@@ -2,11 +2,11 @@ name: Bitget Scanner
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "0 0,4,8,12,16,20 * * *"
   workflow_dispatch:
 
 jobs:
-  scan:
+  overheat:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
-      - run: python scanner.py
+      - run: python overheat.py
         env:
-          SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
+          OVERHEAT_SHEET_ID: ${{ secrets.OVERHEAT_SHEET_ID }}
           GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
