@@ -53,6 +53,8 @@ def main():
         sym = item.get("symbol", "")
         if "USDT" not in sym:
             continue
+        if not sym.replace("USDT", "").isalnum():
+            continue
         try:
             price = float(item.get("lastPr", 0))
             change24h = float(item.get("change24h", 0)) * 100
