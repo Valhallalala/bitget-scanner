@@ -92,12 +92,13 @@ def main():
                     round(change3d, 2),
                     round(funding, 4),
                     int(vol),
-                    datetime.utcnow().strftime("%H:%M:%S")
+                    from datetime import timedelta, timezone
+(datetime.now(timezone.utc) + timedelta(hours=5)).strftime("%H:%M:%S")
                 ])
         except Exception:
             continue
 
-    rows.sort(key=lambda x: -x[4])
+    rows.sort(key=lambda x: -x[2])
     update_sheet(rows)
     print("Обновлено строк:", len(rows))
 
