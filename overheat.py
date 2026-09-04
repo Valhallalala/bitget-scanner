@@ -55,6 +55,7 @@ def main():
             continue
         if not sym.replace("USDT", "").isalnum():
             continue
+
         try:
             price = float(item.get("lastPr", 0))
             change24h = float(item.get("change24h", 0)) * 100
@@ -62,10 +63,12 @@ def main():
             vol = float(item.get("usdtVolume", item.get("quoteVolume", 0)))
         except:
             continue
+
         if price <= 0:
             continue
 
         candidates.append((sym, price, change24h, funding, vol))
+
     rows = []
     seen = set()
 
@@ -75,13 +78,12 @@ def main():
                 continue
             seen.add(sym)
 
-    for sym, price, change24h, funding, vol in candidates:
-        try:
             c = requests.get(
                 "https://api.bitget.com/api/v2/mix/market/candles",
                 params={"symbol": sym, "granularity": "1D", "limit": 4, "productType": "USDT-FUTURES"},
                 timeout=10
             ).json().get("data", [])
+
             if len(c) < 4:
                 continue
 
@@ -102,6 +104,7 @@ def main():
             continue
 
     rows.sort(key=lambda x: -x[4])
+
     update_sheet(rows)
     print("Обновлено строк:", len(rows))
 
