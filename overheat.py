@@ -1,7 +1,7 @@
 import requests
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 SHEET_ID = os.environ["OVERHEAT_SHEET_ID"]
 CREDS = json.loads(os.environ["GDRIVE_CREDENTIALS"])
@@ -66,9 +66,6 @@ def main():
             continue
 
         candidates.append((sym, price, change24h, funding, vol))
-
-        candidates = candidates
-
     rows = []
 
     for sym, price, change24h, funding, vol in candidates:
