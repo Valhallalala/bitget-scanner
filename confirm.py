@@ -121,7 +121,32 @@ def main():
             continue
 
     update_sheet(signals)
+    if signals:
+        send_email(signals)
     print("Сигналов:", len(signals))
+    import smtplib
+from email.mime.text import MIMEText
+
+def send_email(signals):
+    user = os.environ["EMAIL_USER"]
+    password = os.environ["EMAIL_PASS"]
+
+    lines = []
+    for s in signals:
+        lines.append(f"{s[0]} | Цена: {s[1]} | Стоп: {s[3]} | ТП1: {s[4]} | ТП2: {s[5]}")
+
+    text = "\n".join(lines)
+
+    msg = MIMEText(text)
+    msg["Subject"] = "Bitget Short Signals"
+    msg["From"] = user
+    msg["To"] = user
+
+    server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+    server.login(user, password)
+    server.send_message(msg)
+    server.quit()
+
 
 if __name__ == "__main__":
     main()
