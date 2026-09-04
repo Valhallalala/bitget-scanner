@@ -3,7 +3,7 @@ import json
 import os
 from datetime import datetime, timedelta, timezone
 
-SHEET_ID = os.environ["SIGNALS_SHEET_ID"]
+SHEET_ID = os.environ["OVERHEAT_SHEET_ID"]
 CREDS = json.loads(os.environ["GDRIVE_CREDENTIALS"])
 
 def get_access_token():
