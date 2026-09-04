@@ -32,3 +32,5 @@ jobs:
         env:
           OVERHEAT_SHEET_ID: ${{ secrets.OVERHEAT_SHEET_ID }}
           GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
