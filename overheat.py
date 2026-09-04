@@ -29,8 +29,16 @@ def get_access_token():
 def update_sheet(rows):
     token = get_access_token()
     sheet = "Лист1"
-    url = f"https://sheets.googleapis.com/v4/spreadsheets/{SHEET_ID}/values/{sheet}!A1"
 
+    # Очищаем лист перед записью
+    clear_url = f"https://sheets.googleapis.com/v4/spreadsheets/{SHEET_ID}/values/{sheet}!A:G"
+    requests.post(
+        clear_url + ":clear",
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=15
+    )
+
+    url = f"https://sheets.googleapis.com/v4/spreadsheets/{SHEET_ID}/values/{sheet}!A1"
     data = [
         ["Тикер", "Цена", "Рост 24ч, %", "Рост 3д, %", "Фондинг, %", "Объём 24ч, $", "Обновлено"],
         *rows
