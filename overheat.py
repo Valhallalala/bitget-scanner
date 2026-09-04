@@ -67,6 +67,13 @@ def main():
 
         candidates.append((sym, price, change24h, funding, vol))
     rows = []
+    seen = set()
+
+    for sym, price, change24h, funding, vol in candidates:
+        try:
+            if sym in seen:
+                continue
+            seen.add(sym)
 
     for sym, price, change24h, funding, vol in candidates:
         try:
@@ -94,7 +101,7 @@ def main():
         except Exception:
             continue
 
-    rows.sort(key=lambda x: -x[2])
+    rows.sort(key=lambda x: -x[4])
     update_sheet(rows)
     print("Обновлено строк:", len(rows))
 
