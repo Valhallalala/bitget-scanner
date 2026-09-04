@@ -92,8 +92,7 @@ def main():
                     round(change3d, 2),
                     round(funding, 4),
                     int(vol),
-                    from datetime import timedelta, timezone
-(datetime.now(timezone.utc) + timedelta(hours=5)).strftime("%H:%M:%S")
+                    (datetime.now(timezone.utc) + timedelta(hours=5)).strftime("%H:%M:%S")
                 ])
         except Exception:
             continue
