@@ -1,6 +1,8 @@
 import requests
 import json
 import os
+import smtplib
+from email.mime.text import MIMEText
 from datetime import datetime, timedelta, timezone
 
 SHEET_ID = os.environ["OVERHEAT_SHEET_ID"]
@@ -53,8 +55,27 @@ def update_sheet(rows):
         timeout=15
     )
 
+def send_email(signals):
+    user = os.environ["EMAIL_USER"]
+    password = os.environ["EMAIL_PASS"]
+
+    lines = []
+    for s in signals:
+        lines.append(f"{s[0]} | Цена: {s[1]} | Стоп: {s[3]} | ТП1: {s[4]} | ТП2: {s[5]}")
+
+    text = "\n".join(lines)
+
+    msg = MIMEText(text)
+    msg["Subject"] = "Bitget Short Signals"
+    msg["From"] = user
+    msg["To"] = user
+
+    server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+    server.login(user, password)
+    server.send_message(msg)
+    server.quit()
+
 def main():
-    # Читаем перегретые из первой таблицы
     overheat_id = os.environ["OVERHEAT_SHEET_ID"]
     overheat_data = get_sheet_data(overheat_id, "A2:A")
 
@@ -85,7 +106,6 @@ def main():
             if len(c) < 4:
                 continue
 
-            # Последние свечи
             last = c[0]
             prev = c[1]
 
@@ -97,7 +117,6 @@ def main():
             prev_close = float(prev[4])
             prev_high = float(prev[2])
 
-            # Условия разворота
             is_bearish = close_price < open_price
             upper_wick = (high_price - max(open_price, close_price)) / high_price > 0.001
             rejected_high = high_price >= prev_high * 1.005
@@ -124,29 +143,6 @@ def main():
     if signals:
         send_email(signals)
     print("Сигналов:", len(signals))
-    import smtplib
-from email.mime.text import MIMEText
-
-def send_email(signals):
-    user = os.environ["EMAIL_USER"]
-    password = os.environ["EMAIL_PASS"]
-
-    lines = []
-    for s in signals:
-        lines.append(f"{s[0]} | Цена: {s[1]} | Стоп: {s[3]} | ТП1: {s[4]} | ТП2: {s[5]}")
-
-    text = "\n".join(lines)
-
-    msg = MIMEText(text)
-    msg["Subject"] = "Bitget Short Signals"
-    msg["From"] = user
-    msg["To"] = user
-
-    server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-    server.login(user, password)
-    server.send_message(msg)
-    server.quit()
-
 
 if __name__ == "__main__":
     main()
