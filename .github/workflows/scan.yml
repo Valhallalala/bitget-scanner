@@ -1,4 +1,4 @@
-name: Bitget Scanner
+name: Bitget Scanner Update
 
 on:
   schedule:
