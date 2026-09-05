@@ -117,6 +117,9 @@ def main():
             if not (prev_close < prev_ema and last_close > last_ema):
                 continue
 
+            if last_close < last_ema:
+                continue
+
             # Узкий диапазон за 6 часов
             recent_high = max(highs[-6:])
             recent_low = min(lows[-6:])
@@ -133,6 +136,8 @@ def main():
             vol_ratio = current_vol / avg_vol
 
             if vol_ratio < 1.2:
+                continue
+            if last_close < float(c[-1][1]):
                 continue
 
             rows.append([
