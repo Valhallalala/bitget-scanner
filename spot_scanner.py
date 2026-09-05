@@ -122,7 +122,7 @@ def main():
             recent_low = min(lows[-6:])
             range_pct = (recent_high - recent_low) / recent_low * 100
 
-            if range_pct > 3.0:
+            if range_pct > 4.0:
                 continue
 
             # Рост объёма
@@ -132,7 +132,7 @@ def main():
                 continue
             vol_ratio = current_vol / avg_vol
 
-            if vol_ratio < 1.5:
+            if vol_ratio < 1.2:
                 continue
 
             rows.append([
